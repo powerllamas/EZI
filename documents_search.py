@@ -40,13 +40,15 @@ for k in sorted(keywords):
 
 documents = defaultdict(list)
 with open(documents_filepath) as file:
-    current_doc = 0
+    current_doc = None
     for line in file:
+        if current_doc is None:
+            current_doc = line.strip()
         words = line.split()
         if words:
             documents[current_doc] += words
         else:
-            current_doc += 1
+            current_doc = None
 
 for k, doc in documents.iteritems():
     clean_words = map(clean_word, doc)
