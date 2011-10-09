@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 
 from stemmer import PorterStemmer
 
@@ -19,3 +19,15 @@ with open(keywords_filepath) as file:
 for k in sorted(keywords):
     print k
 
+documents = defaultdict(list)
+with open(documents_filepath) as file:
+    current_doc = 0
+    for line in file:
+        words = line.split()
+        if words:
+            documents[current_doc] += words
+        else:
+            current_doc += 1
+
+for doc in documents.items():
+    print doc
