@@ -8,13 +8,14 @@ stemmer = PorterStemmer()
 
 def clean_word(word):
     word = word.lower()
+    word = filter(lambda c: c.isalnum(), word)
     if word in stopwords:
         return None
     else:
         return stemmer.stem(word, 0, len(word)-1)
 
 def clean_word_list(list):
-    return [word for word in list if word is not None]
+    return [word for word in list if word]
 
 stopwords_filepath = "data/stopwords.txt"
 keywords_filepath = "data/keywords.txt"
