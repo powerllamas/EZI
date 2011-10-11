@@ -1,11 +1,13 @@
-# -*- coding: utf-8 -*-
+ï»¿# -*- coding: utf-8 -*-
 
 from collections import OrderedDict, defaultdict
+
 from stemmer import PorterStemmer
 import math
 import sys
 import argparse
 import wx
+from wx.lib.wordwrap import wordwrap
 
 
 def dot_product(vecA, vecB):
@@ -189,12 +191,12 @@ class MainWindow(wx.Frame):
         info = wx.AboutDialogInfo()
         info.Name = "TF-IDF"
         info.Version = "0.3"
-        info.Copyright = "(C) 2011 Krzysztof Urban & Tomasz Ziêtkiewicz"
+        info.Copyright = u"(C) 2011 Krzysztof Urban & Tomasz ZiÄ™tkiewicz"
         info.Description = wordwrap(
             "Simple TF-IDF implementation.\nFor command line help run with argument \"-h\"",
             350, wx.ClientDC(self))
         info.WebSite = ("mailto:tomek.zietkiewicz@gmail.com", "Email")
-        info.Developers = [ "Tomasz Ziêtkiewicz", "Krzysztof Urban" ]
+        info.Developers = [ u"Tomasz ZiÄ™tkiewicz", "Krzysztof Urban" ]
 
         info.License = wordwrap("This is free software: you are free to change and redistribute it.\n\nThere is NO WARRANTY, to the extent permitted by law.", 500, wx.ClientDC(self))
 
@@ -232,8 +234,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
       formatter_class=argparse.RawDescriptionHelpFormatter,
       description = "Simple TF-IDF implementation.",
-      prog="enconv",
-      epilog="Authors:\t\tKrzysztof Urban & Tomasz Ziêtkiewicz. 2011\nCopyright:\tThis is free software: you are free to change and redistribute it.\n\t\tThere is NO WARRANTY, to the extent permitted by law."
+      prog = "enconv",
+      epilog = u"Authors:\t\tKrzysztof Urban & Tomasz ZiÄ™tkiewicz. 2011\nCopyright:\tThis is free software: you are free to change and redistribute it.\n\t\tThere is NO WARRANTY, to the extent permitted by law."
       )
     parser.add_argument('-k', '--keywords', help="Keywords file path", default="data/keywords.txt")
     parser.add_argument('-s', '--stopwords', help="Stopwords file path", default="data/stopwords.txt")
