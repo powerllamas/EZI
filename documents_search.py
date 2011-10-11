@@ -141,15 +141,93 @@ class TFIDF_Search(object):
         for title, sim in sorted(ranking.items(), key=(lambda t: t[1]), reverse=True):
             print "%4f\t%s" % (sim, title)
 
+class MainWindow(wx.Frame):
+    def __init__(self, parent, title):
+        self.size = (300,250)
+        wx.Frame.__init__(self, parent, title=title, size = self.size )
+        
+ 
+        
+        self.helpProvider = wx.SimpleHelpProvider()
+        wx.HelpProvider.Set(self.helpProvider)
+        
+        self.openButton = wx.Button(self, label = "Documents File", pos = (10, 10))
+        self.openButton.SetHelpText("Choose a file to open")
+                
+        self.infileLabel = wx.StaticText(self, label = "No file choosen",
+					  pos = (self.openButton.GetPosition().x + self.openButton.GetSize().GetWidth() + 10, self.openButton.GetPosition().y)) 
+        
+        
+        
+        cBtn = wx.ContextHelpButton(self, pos = (10, 195))
+        cBtn.SetHelpText("wx.ContextHelpButton")
 
+        filemenu= wx.Menu()
+        helpmenu = wx.Menu()
+
+        menuExit = filemenu.Append(wx.ID_EXIT,"E&xit"," Terminate the program")
+        menuOpen = filemenu.Append(wx.ID_OPEN,"Open"," Open source File")
+        menuContextHelp = helpmenu.Append(wx.ID_ANY, "Context help", "Starts context menu mode")
+        menuAbout = helpmenu.Append(wx.ID_ABOUT, "&About"," Information about this program")
+
+        menuBar = wx.MenuBar()
+        menuBar.Append(filemenu,"&File")
+        menuBar.Append(helpmenu,"&Help")
+        self.SetMenuBar(menuBar) 
+        
+        
+        # Set events.
+        self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
+        self.Bind(wx.EVT_MENU, self.OnExit, menuExit)
+        self.Bind(wx.EVT_MENU, self.OnOpen, menuOpen)
+        self.Bind(wx.EVT_MENU, self.OnContextHelp, menuContextHelp)
+        self.Bind(wx.EVT_BUTTON, self.OnOpen, self.openButton)
+        self.Show(True)
+
+    def OnAbout(self,e):
+             
+        info = wx.AboutDialogInfo()
+        info.Name = "TF-IDF"
+        info.Version = "0.3"
+        info.Copyright = "(C) 2011 Krzysztof Urban & Tomasz Ziêtkiewicz"
+        info.Description = wordwrap(
+            "Simple TF-IDF implementation.\nFor command line help run with argument \"-h\"",
+            350, wx.ClientDC(self))
+        info.WebSite = ("mailto:tomek.zietkiewicz@gmail.com", "Email")
+        info.Developers = [ "Tomasz Ziêtkiewicz", "Krzysztof Urban" ]
+
+        info.License = wordwrap("This is free software: you are free to change and redistribute it.\n\nThere is NO WARRANTY, to the extent permitted by law.", 500, wx.ClientDC(self))
+
+        # Then we call wx.AboutBox giving it that info object
+        wx.AboutBox(info)
+    
+    def OnContextHelp(self, e):
+        contextHelp = wx.ContextHelp()
+        contextHelp.BeginContextHelp()
+            
+        
+    def OnOpen(self,e):
+      """ Open a file"""
+      dirname = ''
+      dlg = wx.FileDialog(self, "Choose a source file", dirname, "", "*.*", wx.OPEN)
+      if dlg.ShowModal() == wx.ID_OK:
+          filename = dlg.GetFilename()
+          dirname = dlg.GetDirectory()
+          filePath = os.path.join(dirname, filename)
+          dlg.Destroy()
+    
+    def OnExit(self,e):
+        self.Close(True)  # Close the frame.
+            
+            
 if __name__ == '__main__':
 
-    # if len (sys.argv) == 1 or len(sys.argv) > 1 and (sys.argv[1] == "-g" or sys.argv[1] == "--gui"):
-      # print "Entered GUI mode"
-      # app = wx.App(False)
-      # frame = MainWindow(None, "TF-IDF")
-      # app.MainLoop()
-      # sys.exit()
+    if len (sys.argv) == 1 or len(sys.argv) > 1 and (sys.argv[1] == "-g" or sys.argv[1] == "--gui"):
+        print "Entered GUI mode"
+        app = wx.App(False)
+        frame = MainWindow(None, "TF-IDF")
+        app.MainLoop()
+        sys.exit()
     
     parser = argparse.ArgumentParser(
       formatter_class=argparse.RawDescriptionHelpFormatter,
