@@ -5,6 +5,7 @@ from stemmer import PorterStemmer
 import math
 import sys
 import argparse
+import wx
 
 
 def dot_product(vecA, vecB):
@@ -137,23 +138,8 @@ class TFIDF_Search(object):
         for title in self.documents.iterkeys():
             ranking[title] = self.similarity(title, "question")
         
-        for title, sim in sorted(ranking.items(), key=(lambda t: t[1])):
+        for title, sim in sorted(ranking.items(), key=(lambda t: t[1]), reverse=True):
             print "%4f\t%s" % (sim, title)
-
-#for doc in documents.items():
-    #print doc
-    
-# stopwords_filepath = "data/stopwords.txt"
-# keywords_filepath = "data/keywords.txt"
-# documents_filepath = "data/documents.txt"
-
-# searcher = TFIDF_Search(stopwords_filepath, keywords_filepath, documents_filepath)
-
-# if(len(sys.argv) > 1):
-    # question = sys.argv[1]
-# else:
-    # question = "Radial Neural networks"
-# searcher.search(question)
 
 
 if __name__ == '__main__':
@@ -161,13 +147,13 @@ if __name__ == '__main__':
     # if len (sys.argv) == 1 or len(sys.argv) > 1 and (sys.argv[1] == "-g" or sys.argv[1] == "--gui"):
       # print "Entered GUI mode"
       # app = wx.App(False)
-      # frame = MainWindow(None, "Encoding converter")
+      # frame = MainWindow(None, "TF-IDF")
       # app.MainLoop()
       # sys.exit()
     
     parser = argparse.ArgumentParser(
       formatter_class=argparse.RawDescriptionHelpFormatter,
-      description = "TD-IDF search engine implementation.",
+      description = "Simple TF-IDF implementation.",
       prog="enconv",
       epilog="Authors:\t\tKrzysztof Urban & Tomasz Ziêtkiewicz. 2011\nCopyright:\tThis is free software: you are free to change and redistribute it.\n\t\tThere is NO WARRANTY, to the extent permitted by law."
       )
@@ -175,12 +161,11 @@ if __name__ == '__main__':
     parser.add_argument('-s', '--stopwords', help="Stopwords file path", default="data/stopwords.txt")
     parser.add_argument('-d', '--documents', help="Documents file path", default="data/documents.txt")
     parser.add_argument('-g', '--gui', help='GUI mode')
-    parser.add_argument('-v', '--version', action='version', version='%(prog)s 0.3')
-    #parser.add_argument('question', help='Search string', required=True)    
+    parser.add_argument('-v', '--version', action='version', version='%(prog)s 0.1')
     args = parser.parse_args()
 
     searcher = TFIDF_Search(args.stopwords, args.keywords, args.documents)
     q = raw_input("Enter search string or \"exit()\" and press enter: ")
     while q != "exit()":
         searcher.search(q)
-        q = raw_input("\nnter search string or \"exit()\" and press enter: ")
+        q = raw_input("\nEnter search string or \"exit()\" and press enter: ")
