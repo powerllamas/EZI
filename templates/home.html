@@ -5,33 +5,35 @@
     <link rel="stylesheet" href="static/bootstrap.css">
   </head>
   <body>
-    <h1>Kandelabr - wyszukiwanie dokumentów</h1>
-    <form action=''>
-      <input type='search' placeholder="Szukaj..." name='search' value="{{ query }}" />
-    </form>
-    {% if found is not none %}
-      {% if not found %}
-        <div class="alert-message info">
-          <p>Brak wyników dla podanego zapytania.</p>
-        </div>
-      {% else %}
-      <table>
-        <thead>
-          <tr>
-            <th>Tytuł</th>
-            <th>Podobieństwo</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for item in found %}
-          <tr>
-            <td>{{ item[0] }}</td>
-            <td>{{ item[1] }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+    <div class="container">
+      <h1>Kandelabr - wyszukiwanie dokumentów</h1>
+      <form action=''>
+        <input type='search' placeholder="Szukaj..." name='search' value="{{ query }}" />
+      </form>
+      {% if found is not none %}
+        {% if not found %}
+          <div class="alert-message info">
+            <p>Brak wyników dla podanego zapytania.</p>
+          </div>
+        {% else %}
+        <table>
+          <thead>
+            <tr>
+              <th>Tytuł</th>
+              <th>Podobieństwo</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in found %}
+            <tr>
+              <td>{{ item[0] }}</td>
+              <td>{{ item[1] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
       {% endif %}
-    {% endif %}
+    </div>
   </body>
 </html>
