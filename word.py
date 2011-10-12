@@ -20,6 +20,7 @@ class Cleaner(object):
         return word
 
     def clean_wordlist(self, wordlist):
+        wordlist = " ".join(wordlist).replace('-',' ').split()
         clean_list = map(lambda x: self.clean_word(x), wordlist)
         return [word for word in clean_list if word]
 

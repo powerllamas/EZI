@@ -63,7 +63,7 @@ class TestCleaner(unittest.TestCase):
 
         words = "stop computer halt 12-10-2010 morning".split()
         actual = self.c.clean_wordlist(words)
-        expected = ["comput", "12102010", "morn"]
+        expected = ["comput", "12", "10", "2010", "morn"]
         self.assertEqual(actual, expected)
 
 class TestTFIDF(unittest.TestCase):

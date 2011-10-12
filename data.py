@@ -2,8 +2,6 @@
 
 import math
 
-from collections import defaultdict
-
 class Vector(object):
 
     @staticmethod
