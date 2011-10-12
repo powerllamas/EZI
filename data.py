@@ -19,7 +19,7 @@ class Vector(object):
 
     @staticmethod
     def similarity(vec_a, vec_b):
-        length = Vector.length(vec_a) + Vector.length(vec_b)
+        length = Vector.length(vec_a) * Vector.length(vec_b)
         if length == 0:
             return 0.0
         else:
