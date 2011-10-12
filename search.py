@@ -13,7 +13,8 @@ class TFIDF(object):
         self.keywords_count = None
         self.documents = None
         self.document_vectors = None
-
+        self.documents_tfidfs = {}
+        
         self.cleaner = cleaner
 
         self._setup_keywords(keywords)
@@ -58,15 +59,37 @@ class TFIDF(object):
 
         results = [item for item in sorted(ranking.items(), key=lambda t: t[1], reverse = True) if item[1] > 0]
         return results
+    
+    def fast_search(self, question):       
+        question_vector = self.phrase_to_vector(question)
+        question_tfidfs = self.tfidf(question_vector)
+        ranking = {}
+        for title in self.documents:
+            ranking[title] = self.doc_question_similarity(title, question_tfidfs)
+
+        results = [item for item in sorted(ranking.items(), key=lambda t: t[1], reverse = True) if item[1] > 0]
+        return results
 
     def phrase_to_vector(self, phrase):
         phrase_words = phrase.split()
         phrase_clean = self.cleaner.clean_wordlist(phrase_words)
         return self.wordlist_to_vector(phrase_clean)
-
+    
     def similarity(self, vec1, vec2):
         return Vector.similarity(self.tfidf(vec1), self.tfidf(vec2))
+    
+    def doc_question_similarity(self, doc_title, question_tfidfs):
+        return Vector.similarity(self.tfidf_by_title(doc_title), question_tfidfs)
 
+    def tfidf_by_title(self, title):
+        if title in self.documents_tfidfs:
+            return self.documents_tfidfs[title]
+        else:
+            document_vector = self.document_vectors[title]
+            tfidfs = self.tfidf(document_vector)
+            self.documents_tfidfs[title] = tfidfs
+            return tfidfs
+        
     def tfidf(self, document):
         tfs = [self.tf(document, word) for word in self.keywords.iterkeys()]
         idfs = [self.idf(word) for word in self.keywords.iterkeys()]
