@@ -52,6 +52,5 @@ class Loader(object):
                 documents[title] = " ".join(cache)
                 cache = []
                 title = None
-        print documents
         return documents
 

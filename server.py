@@ -23,13 +23,16 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    found = None
+    found_extended = None
     question = ""
     if 'search' in request.args:
         question = request.args['search']
         found = tfidf.search(question)
-    return render_template('home.html', found=found, query=question)
+        found_extended = [(title, similarity, Cleaner.make_printable(tfidf.documents[title])) 
+                for title, similarity in found]
+    return render_template('home.html', found=found_extended, query=question)
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
+    app.debug = True
     app.run(host='0.0.0.0', port=port)

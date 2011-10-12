@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import string
+
 from stemmer import PorterStemmer
 
 class Cleaner(object):
@@ -20,4 +22,8 @@ class Cleaner(object):
     def clean_wordlist(self, wordlist):
         clean_list = map(lambda x: self.clean_word(x), wordlist)
         return [word for word in clean_list if word]
+
+    @staticmethod
+    def make_printable(phrase):
+        return filter(lambda c: c in string.printable, phrase)
 
