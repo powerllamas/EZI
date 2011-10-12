@@ -104,5 +104,26 @@ class TestTFIDF(unittest.TestCase):
         expected = [] #because idf=0
         self.assertEqual(actual, expected)
 
+    def test_tf(self):
+        document = self.s.document_vectors['document 1 ccc']
+        actual = self.s.tf(document, 'aaa')
+        expected = 0.6666666
+        self.assertAlmostEqual(actual, expected)
+
+        document = self.s.document_vectors['document 2 stop']
+        actual = self.s.tf(document, 'aaa')
+        expected = 1.0
+        self.assertAlmostEqual(actual, expected)
+
+        document = self.s.document_vectors['document 3 stop']
+        actual = self.s.tf(document, 'aaa')
+        expected = 1.0
+        self.assertAlmostEqual(actual, expected)
+
+        document = self.s.document_vectors['document 4 ddd']
+        actual = self.s.tf(document, 'aaa')
+        expected = 0.5
+        self.assertAlmostEqual(actual, expected)
+
 if __name__ == '__main__':
     unittest.main()
