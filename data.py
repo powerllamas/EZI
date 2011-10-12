@@ -6,24 +6,24 @@ from collections import defaultdict
 
 class Vector(object):
 
-    def __init__(self, values):
-        self.values = values
-
-    def length(self):
-        powers = map(lambda x: pow(x,2), self.values)
+    @staticmethod
+    def length(vector):
+        powers = map(lambda x: pow(x,2), vector)
         return math.sqrt(sum(powers))
 
-    def dot_product(self, other):
-        pairs = zip(self.values, other.values)
+    @staticmethod
+    def dot_product(vec_a, vec_b):
+        pairs = zip(vec_a, vec_b)
         multiples = [x*y for x,y in pairs]
-        return sum(multiples)
+        return float(sum(multiples))
 
-    def similarity(self, other):
-        length = self.length() + other.length()
+    @staticmethod
+    def similarity(vec_a, vec_b):
+        length = Vector.length(vec_a) + Vector.length(vec_b)
         if length == 0:
-            return 0
+            return 0.0
         else:
-            return self.dot_product(other) / length
+            return Vector.dot_product(vec_a, vec_b) / float(length)
 
 class Loader(object):
 

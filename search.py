@@ -39,7 +39,7 @@ class TFIDF(object):
         self.keywords_count = defaultdict(int)
         for keyword, i in self.keywords.iteritems():
             for document_vector in self.document_vectors.itervalues():
-                if document_vector.values[i] > 0:
+                if document_vector[i] > 0:
                     self.keywords_count[keyword] += 1
 
     def wordlist_to_vector(self, wordlist):
@@ -47,7 +47,7 @@ class TFIDF(object):
         wordcount = defaultdict(int)
         for word in significant:
             wordcount[word] += 1
-        vector = Vector([wordcount[word] for word in self.keywords.iterkeys()])
+        vector = [wordcount[word] for word in self.keywords.iterkeys()]
         return vector
 
     def search(self, question):
@@ -65,21 +65,21 @@ class TFIDF(object):
         return self.wordlist_to_vector(phrase_clean)
 
     def similarity(self, vec1, vec2):
-        return self.tfidf(vec1).similarity(self.tfidf(vec2))
+        return Vector.similarity(self.tfidf(vec1), self.tfidf(vec2))
 
     def tfidf(self, document):
         tfs = [self.tf(document, word) for word in self.keywords.iterkeys()]
         idfs = [self.idf(word) for word in self.keywords.iterkeys()]
-        tfidfs = [tf*idf for tf, idf in zip(tfs, idfs)]
-        return Vector(tfidfs)
+        tfidfs = [float(tf*idf) for tf, idf in zip(tfs, idfs)]
+        return tfidfs
 
     def tf(self, document, term):
         term_index = self.keywords[term]
-        n = document.values[term_index]
+        n = document[term_index]
         if n == 0:
             return 0
         else:
-            return float(n) / float(max(document.values))
+            return float(n) / float(max(document))
 
     def idf(self, term):
         n = self.keywords_count[term]
