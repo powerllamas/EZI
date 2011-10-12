@@ -32,7 +32,6 @@ if __name__ == '__main__':
     parser.add_argument('-s', '--stopwords', help="Stopwords file path", default="data/stopwords.txt")
     parser.add_argument('-d', '--documents', help="Documents file path", default="data/documents.txt")
     parser.add_argument('-n', '--noresults', help="Number of displayed results", default="5")
-    parser.add_argument('-f', '--fast', action='store_true', help="Search with memory - don't calculate tfidfs each time")
     parser.add_argument('-v', '--version', action='version', version='%(prog)s 0.3')
     args = parser.parse_args()
 
@@ -46,10 +45,7 @@ if __name__ == '__main__':
 
     question = raw_input("Enter search string or \"exit()\" and press enter: ")
     while question != "exit()":
-            if args.fast:
-                found = tfidf.fast_search(question)
-            else:
-                found = tfidf.search(question)
+            found = tfidf.search(question)
             for title, similarity in found[:n]:
                 print "{0:4f}\t{1}".format(similarity, title)            
             question = raw_input("\nEnter search string or \"exit()\" and press enter: ")
