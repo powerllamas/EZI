@@ -24,6 +24,7 @@ app = Flask(__name__)
 @app.route('/')
 def home():
     found = None
+    question = ""
     if 'search' in request.args:
         question = request.args['search']
         found = tfidf.search(question)
