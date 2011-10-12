@@ -1,90 +1,90 @@
 # -*- coding: utf-8 -*-
 
-class TFIDF_Search(object):
+import math
+
+from collections import defaultdict, OrderedDict
+
+from data import Vector
+
+class TFIDF(object):
 
     def __init__(self, keywords, documents, cleaner):
+        self.keywords = None
+        self.keywords_count = None
+        self.documents = None
+        self.document_vectors = None
+
         self.cleaner = cleaner
 
         self._setup_keywords(keywords)
         self._setup_documents(documents)
+        self._setup_keywords_count()
 
-        self.bag_of_words = {}   
-        self.documents_count = {}
-        self.append_bag_of_words(self.documents)
-        
-    def read_keywords(self, keywords_filepath):
+    def _setup_keywords(self, keywords):
         self.keywords = OrderedDict()
-        with open(keywords_filepath) as file:
-            for line in file:
-                word = line.strip()
-                stemmed_word = self.clean_word(word)
-                if stemmed_word is not None:
-                    self.keywords[stemmed_word] = 0
+        cleaned = self.cleaner.clean_wordlist(keywords)
+        cleaned = set(cleaned)
+        for i, word in enumerate(sorted(cleaned)):
+            self.keywords[word] = i
 
-    #for k in sorted(keywords):
-    #    print k
+    def _setup_documents(self, documents):
+        self.documents = documents
+        self.document_vectors = {}
+        for title, words in documents.iteritems():
+            cleaned = self.cleaner.clean_wordlist(words)
+            vector = self.wordlist_to_vector(cleaned)
+            self.document_vectors[title] = vector
 
-    def read_documents(self, documents_filepath):
-        self.documents = defaultdict(list)
-        with open(documents_filepath) as file:
-            current_doc = None
-            for line in file:
-                if current_doc is None:
-                    current_doc = line.strip()
-                words = line.split()
-                if words:
-                    self.documents[current_doc] += words
-                else:
-                    current_doc = None
+    def _setup_keywords_count(self):
+        self.keywords_count = defaultdict(int)
+        for keyword, i in self.keywords.iteritems():
+            for document_vector in self.document_vectors.itervalues():
+                if document_vector.values[i] > 0:
+                    self.keywords_count[keyword] += 1
 
-        for k, doc in self.documents.iteritems():
-            clean_words = map(self.clean_word, doc)
-            self.documents[k] = self.clean_word_list(clean_words)
-            
-    def append_bag_of_words(self, documents):
-        for keyword in self.keywords:
-            self.documents_count.setdefault(keyword, 0)
-            for k, doc in documents.iteritems():
-                keyword_count = doc.count(keyword)
-                self.bag_of_words.setdefault(k, {})[keyword] = keyword_count
-                if keyword_count > 0:
-                    self.documents_count[keyword] += 1
-        
-        
+    def wordlist_to_vector(self, wordlist):
+        significant = [word for word in wordlist if word in self.keywords]
+        wordcount = defaultdict(int)
+        for word in significant:
+            wordcount[word] += 1
+        vector = Vector([wordcount[word] for word in self.keywords.iterkeys()])
+        return vector
+
+    def search(self, question):
+        question_vector = self.phrase_to_vector(question)
+        ranking = {}
+        for title, document_vector in self.document_vectors.iteritems():
+            ranking[title] = self.similarity(document_vector, question_vector)
+
+        for title, similarity in sorted(ranking.items(), key=(lambda t: t[1]), reverse=True):
+            print "{0:4f}\t{1}".format(similarity, title)
+
+    def phrase_to_vector(self, phrase):
+        phrase_words = phrase.split()
+        phrase_clean = self.cleaner.clean_wordlist(phrase_words)
+        return self.wordlist_to_vector(phrase_clean)
+
+    def similarity(self, vec1, vec2):
+        return self.tfidf(vec1).similarity(self.tfidf(vec2))
+
+    def tfidf(self, document):
+        tfs = [self.tf(document, word) for word in self.keywords.iterkeys()]
+        idfs = [self.idf(word) for word in self.keywords.iterkeys()]
+        tfidfs = [tf*idf for tf, idf in zip(tfs, idfs)]
+        return Vector(tfidfs)
+
     def tf(self, document, term):
-        n = self.bag_of_words[document][term]
+        term_index = self.keywords[term]
+        n = document.values[term_index]
         if n == 0:
             return 0
         else:
-            return float(n) / max(self.bag_of_words[document].itervalues())
-            
+            return float(n) / float(max(document.values))
+
     def idf(self, term):
-        if self.documents_count[term] == 0:
+        n = self.keywords_count[term]
+        if n == 0:
             return 0
         else:
-            return math.log(len(self.documents) / self.documents_count[term])
-        
-    def tfidf(self, document):
-        result_vector = []
-        for term in sorted(self.keywords):
-            result_vector.append(self.tf(document, term) * self.idf(term))
-        return Vector(result_vector)
+            return math.log(float(len(self.documents)) / float(n))
 
-    def similarity(self, doc1, doc2):
-        return self.tfidf(doc1).similarity(self.tfidf(doc2))
-        
-    def search(self, question):
-        question_words = question.split()
-        question_words_stemmed = []
-        for word in question_words:
-            word = word.strip()
-            stemmed_word = self.clean_word(word)
-            if (stemmed_word):    
-                question_words_stemmed.append(stemmed_word)
-        self.append_bag_of_words({"question" : question_words_stemmed})
-        ranking = {}
-        for title in self.documents.iterkeys():
-            ranking[title] = self.similarity(title, "question")
-        
-        for title, sim in sorted(ranking.items(), key=(lambda t: t[1]), reverse=True):
-            print "%4f\t%s" % (sim, title)

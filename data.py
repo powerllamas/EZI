@@ -2,6 +2,8 @@
 
 import math
 
+from collections import defaultdict
+
 class Vector(object):
 
     def __init__(self, values):
@@ -37,7 +39,7 @@ class Loader(object):
 
     @staticmethod
     def load_documents(filepath):
-        documents = {}
+        documents = defaultdict(list)
         title = None
         for line in file(filepath):
             if title is None:
@@ -47,4 +49,5 @@ class Loader(object):
                 documents[title] += words
             else:
                 title = None
+        return documents
 
