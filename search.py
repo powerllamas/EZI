@@ -56,8 +56,8 @@ class TFIDF(object):
         for title, document_vector in self.document_vectors.iteritems():
             ranking[title] = self.similarity(document_vector, question_vector)
 
-        for title, similarity in sorted(ranking.items(), key=(lambda t: t[1]), reverse=True):
-            print "{0:4f}\t{1}".format(similarity, title)
+        results = [item for item in sorted(ranking.items(), key=lambda t: t[1], reverse = True)]
+        return results
 
     def phrase_to_vector(self, phrase):
         phrase_words = phrase.split()

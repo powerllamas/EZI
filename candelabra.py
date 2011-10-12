@@ -14,4 +14,7 @@ documents = Loader.load_documents(documents_path)
 
 cleaner = Cleaner(stopwords)
 tfidf = TFIDF(keywords, documents, cleaner)
-tfidf.search("experience")
+found = tfidf.search("experience")
+
+for title, similarity in found[:5]:
+    print "{0:4f}\t{1}".format(similarity, title)
