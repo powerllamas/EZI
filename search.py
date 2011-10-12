@@ -17,9 +17,10 @@ class TFIDF(object):
         
         self.cleaner = cleaner
 
-        self._setup_keywords(keywords)
+        self._setup_keywords(keywords)        
         self._setup_documents(documents)
         self._setup_keywords_count()
+        self._setup_documents_tfidfs()
 
     def _setup_keywords(self, keywords):
         self.keywords = OrderedDict()
@@ -35,6 +36,12 @@ class TFIDF(object):
             cleaned = self.cleaner.clean_wordlist(title.split() + words.split())
             vector = self.wordlist_to_vector(cleaned)
             self.document_vectors[title] = vector
+
+    def _setup_documents_tfidfs(self):
+        for title in self.documents: 
+            vector = self.document_vectors[title]
+            tfidfs = self.tfidf(vector)
+            self.documents_tfidfs[title] = tfidfs
 
     def _setup_keywords_count(self):
         self.keywords_count = defaultdict(int)
@@ -82,13 +89,7 @@ class TFIDF(object):
         return Vector.similarity(self.tfidf_by_title(doc_title), question_tfidfs)
 
     def tfidf_by_title(self, title):
-        if title in self.documents_tfidfs:
-            return self.documents_tfidfs[title]
-        else:
-            document_vector = self.document_vectors[title]
-            tfidfs = self.tfidf(document_vector)
-            self.documents_tfidfs[title] = tfidfs
-            return tfidfs
+        return self.documents_tfidfs[title]
         
     def tfidf(self, document):
         tfs = [self.tf(document, word) for word in self.keywords.iterkeys()]
