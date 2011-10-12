@@ -18,7 +18,7 @@ form + div.info {
     width: 820px;
 }
 
-.content {
+.container .content {
     background-color: #fff;
     padding: 20px;
     margin: 0 -20px;
@@ -34,4 +34,8 @@ form + div.info {
     background-color: #f5f5f5;
     padding: 20px 20px 10px;
     margin: -20px -20px 20px;
+}
+
+.popover .inner {
+    width: 480px;
 }

@@ -39,15 +39,18 @@ class Loader(object):
 
     @staticmethod
     def load_documents(filepath):
-        documents = defaultdict(list)
+        documents = {}
+        cache = []
         title = None
         for line in file(filepath):
             if title is None:
                 title = line.strip()
-            words = line.split()
+            words = line.strip()
             if words:
-                documents[title] += words
+                cache.append(words)
             else:
+                documents[title] = " ".join(cache)
+                cache = []
                 title = None
         return documents
 

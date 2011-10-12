@@ -32,7 +32,7 @@ class TFIDF(object):
         self.documents = documents
         self.document_vectors = {}
         for title, words in documents.iteritems():
-            cleaned = self.cleaner.clean_wordlist(words)
+            cleaned = self.cleaner.clean_wordlist(words.split())
             vector = self.wordlist_to_vector(cleaned)
             self.document_vectors[title] = vector
 
