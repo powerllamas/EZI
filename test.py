@@ -99,5 +99,10 @@ class TestTFIDF(unittest.TestCase):
         expected = []
         self.assertEqual(actual, expected)
 
+    def test_search_with_only_popular_terms(self):
+        actual = self.s.search("aaa")
+        expected = [] #because idf=0
+        self.assertEqual(actual, expected)
+
 if __name__ == '__main__':
     unittest.main()
