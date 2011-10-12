@@ -57,17 +57,8 @@ class TFIDF(object):
             wordcount[word] += 1
         vector = [wordcount[word] for word in self.keywords.iterkeys()]
         return vector
-
-    def search(self, question):
-        question_vector = self.phrase_to_vector(question)
-        ranking = {}
-        for title, document_vector in self.document_vectors.iteritems():
-            ranking[title] = self.similarity(document_vector, question_vector)
-
-        results = [item for item in sorted(ranking.items(), key=lambda t: t[1], reverse = True) if item[1] > 0]
-        return results
     
-    def fast_search(self, question):       
+    def search(self, question):       
         question_vector = self.phrase_to_vector(question)
         question_tfidfs = self.tfidf(question_vector)
         ranking = {}
