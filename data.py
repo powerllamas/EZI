@@ -43,11 +43,12 @@ class Loader(object):
         cache = []
         title = None
         for line in file(filepath):
-            if title is None:
-                title = line.strip()
             words = line.strip()
             if words:
-                cache.append(words)
+                if title is None:
+                    title = words
+                else:
+                    cache.append(words)
             else:
                 documents[title] = " ".join(cache)
                 cache = []

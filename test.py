@@ -72,10 +72,10 @@ class TestTFIDF(unittest.TestCase):
         stopwords = "stop".split()
         keywords = "aaa bbb ccc ddd eee fff".split()
         documents = {
-                'document 1': "aaa aaa aaa ccc",
-                'document 2': "stop aaa bbb ccc",
-                'document 3': "aaa",
-                'document 4': "aaa bbb ccc ddd eee"
+                'document 1 ccc': "aaa aaa aaa ccc",
+                'document 2 stop': "stop aaa bbb ccc",
+                'document 3 stop': "aaa",
+                'document 4 ddd': "aaa bbb ccc ddd eee"
                 }
         self.s = TFIDF(keywords, documents, Cleaner(stopwords))
 
@@ -87,10 +87,10 @@ class TestTFIDF(unittest.TestCase):
     def test_documents_setup(self):
         actual = self.s.document_vectors
         expected = {
-                'document 1': [3, 0, 1, 0, 0, 0],
-                'document 2': [1, 1, 1, 0, 0, 0],
-                'document 3': [1, 0, 0, 0, 0, 0],
-                'document 4': [1, 1, 1, 1, 1, 0]
+                'document 1 ccc': [3, 0, 2, 0, 0, 0],
+                'document 2 stop': [1, 1, 1, 0, 0, 0],
+                'document 3 stop': [1, 0, 0, 0, 0, 0],
+                'document 4 ddd': [1, 1, 1, 2, 1, 0]
                 }
         self.assertEqual(actual, expected)
 
