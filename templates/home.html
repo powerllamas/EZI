@@ -7,12 +7,13 @@
   <body>
     <h1>Kandelabr - wyszukiwanie dokumentów</h1>
     <form action=''>
-      <input type='search' name='search'/>
-      <input type='submit' value='Szukaj' />
+      <input type='search' placeholder="Szukaj..." name='search' value="{{ query }}" />
     </form>
     {% if found is not none %}
       {% if not found %}
-        <p>Brak wyników dla danego zapytania</p>
+        <div class="alert-message info">
+          <p>Brak wyników dla podanego zapytania.</p>
+        </div>
       {% else %}
       <table>
         <thead>

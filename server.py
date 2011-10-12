@@ -27,7 +27,7 @@ def home():
     if 'search' in request.args:
         question = request.args['search']
         found = tfidf.search(question)
-    return render_template('home.html', found=found)
+    return render_template('home.html', found=found, query=question)
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
