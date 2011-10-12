@@ -19,8 +19,9 @@
         </form>
         {% if found is not none %}
           {% if not found %}
-            <div class="alert-message info">
-              <p>Brak wyników dla podanego zapytania.</p>
+            <div class="alert-message block-message info">
+              <p><strong>Brak wyników dla podanego zapytania.</strong></p>
+              <p>Zmień zapytanie i spróbuj ponownie.</p>
             </div>
           {% else %}
           <table>

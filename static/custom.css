@@ -10,6 +10,10 @@ form {
     text-align: center;
 }
 
+form + div.info {
+    display: inline-block;
+}
+
 .container {
     width: 820px;
 }
