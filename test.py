@@ -4,6 +4,7 @@ import unittest
 
 from data import Vector
 from word import Cleaner
+from search import TFIDF
 
 class TestVectorFunctions(unittest.TestCase):
 
@@ -63,6 +64,24 @@ class TestCleaner(unittest.TestCase):
         words = "stop computer halt 12-10-2010 morning".split()
         actual = self.c.clean_wordlist(words)
         expected = ["comput", "12102010", "morn"]
+        self.assertEqual(actual, expected)
+
+class TestTFIDF(unittest.TestCase):
+
+    def setUp(self):
+        stopwords = "stop".split()
+        keywords = "aaa bbb ccc ddd eee fff".split()
+        documents = {
+                'document 1': "aaa aaa aaa ccc".split(),
+                'document 2': "stop aaa bbb ccc".split(),
+                'document 3': "aaa".split(),
+                'document 4': "aaa bbb ccc ddd eee".split()
+                }
+        self.s = TFIDF(keywords, documents, Cleaner(stopwords))
+
+    def test_search_with_no_results(self):
+        actual = self.s.search("fff")
+        expected = []
         self.assertEqual(actual, expected)
 
 if __name__ == '__main__':
