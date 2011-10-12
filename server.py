@@ -26,7 +26,7 @@ def home():
     found = None
     if 'search' in request.args:
         question = request.args['search']
-        found = tfidf.search(question)[:5]
+        found = tfidf.search(question)
     return render_template('home.html', found=found)
 
 if __name__ == '__main__':
