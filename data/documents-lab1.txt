@@ -1,0 +1,11 @@
+Document 1
+information retrieval information retrieval
+
+Document 2
+retrieval retrieval retrieval retrieval
+
+Document 3
+agency information retrieval agency
+
+Document 4
+retrieval agency retrieval agency
