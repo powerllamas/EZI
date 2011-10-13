@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
+import math
 
 from data import Vector
 from word import Cleaner
@@ -104,10 +105,16 @@ class TestTFIDF(unittest.TestCase):
         expected = [] #because idf=0
         self.assertEqual(actual, expected)
 
+
     def test_tf(self):
         document = self.s.document_vectors['document 1 ccc']
+        actual = self.s.tf(document, 'ccc')
+        expected = 0.6666666666
+        self.assertAlmostEqual(actual, expected)
+        
+        document = self.s.document_vectors['document 1 ccc']
         actual = self.s.tf(document, 'aaa')
-        expected = 0.6666666
+        expected = 1.0
         self.assertAlmostEqual(actual, expected)
 
         document = self.s.document_vectors['document 2 stop']
@@ -124,6 +131,98 @@ class TestTFIDF(unittest.TestCase):
         actual = self.s.tf(document, 'aaa')
         expected = 0.5
         self.assertAlmostEqual(actual, expected)
+        
+
+    def test_idf(self):
+        
+        expected_results = [
+                            ("aaa", math.log(1.0, 10)), ("bbb", math.log(2.0, 10)),
+                            ("ccc", math.log(1.3333333333333, 10)), ("ddd", math.log(4.0, 10)),
+                            ("eee", math.log(4.0, 10)), ("fff", 0.0)
+                            ]
+        
+        for term, expected in expected_results:
+            actual = self.s.idf(term)
+            self.assertAlmostEqual(actual, expected)
+
+
+            
+class TestTFIDF_flies(unittest.TestCase):
+    
+    def setUp(self):
+        stopwords = "stop".split()
+        keywords = "bee wasp fly fruit like".split()      
+        documents = {        
+                "D1" : "Time fly like an arrow but fruit fly like a banana.",
+                "D2" : "It's strange that bees and wasps don't like each other.",
+                "D3" : "The fly attendant sprayed the cabin with a strange fruit aerosol.",
+                "D4" : "Try not to carry a light, as wasps and bees may fly toward it.",
+                "D5" : "Fruit fly fly around in swarms. When fly they flap their wings 220 times a second."
+            }
+        self.s = TFIDF(keywords, documents, Cleaner(stopwords))
+            
+            
+    def test_keyword_setup(self):
+        actual = self.s.keywords.items()
+        expected = [("bee", 0), ("fly", 1), ("fruit", 2), ("like", 3), ("wasp", 4)]     
+        self.assertEqual(actual, expected)
+            
+    def test_documents_setup(self):
+        actual = self.s.document_vectors
+        expected = {
+                'D1': [0, 2, 1, 2, 0],
+                'D2': [1, 0, 0, 1, 1],
+                'D3': [0, 1, 1, 0, 0],
+                'D4': [1, 1, 0, 0, 1],
+                'D5': [0, 3, 1, 0, 0]
+                }                
+        self.assertEqual(actual, expected)
+        
+ 
+    def test_tf(self):
+        expected_results = [
+            ("D1", [0, 1, 0.5, 1, 0]),
+            ("D2", [1, 0, 0, 1, 1]),
+            ("D3", [0, 1, 1, 0, 0]),
+            ("D4", [1, 1, 0, 0, 1]),
+            ("D5", [0, 1, 0.333333333333333333, 0, 0])
+            ]
+        for title, expected_vector in expected_results:            
+            document = self.s.document_vectors[title]
+            for word, i in self.s.keywords.items():            
+                actual = self.s.tf(document, word)
+                expected = expected_vector[i]
+                self.assertEqual(actual, expected)        
+
+                
+    def test_idf(self):
+        expected_results = [
+                            ("bee", 0.397940009),
+                            ("fly", 0.096910013),
+                            ("fruit", 0.22184875),
+                            ("like", 0.397940009),
+                            ("wasp", 0.397940009)
+                           ]        
+        for term, expected in expected_results:
+             actual = self.s.idf(term)
+             self.assertAlmostEqual(actual, expected, places=6)
+            
+
+    def test_tfidf(self):
+        expected_results = [                         
+                            ('D1', [0, 0.096910013, 0.110924375, 0.397940009, 0]),
+                            ('D2', [0.397940009, 0, 0, 0.397940009, 0.397940009]),
+                            ('D3', [0, 0.096910013, 0.22184875, 0, 0]),
+                            ('D4', [0.397940009, 0.096910013, 0, 0, 0.397940009]),
+                            ('D5', [0, 0.096910013, 0.073949583, 0, 0])                            
+                            ]
+        for title, expected_vector in expected_results:
+            document = self.s.document_vectors[title]
+            actual_vector = self.s.tfidf(document)
+            for actual, expected in zip(actual_vector, expected_vector):
+                self.assertAlmostEqual(actual, expected, places = 6)
+        
+
 
 if __name__ == '__main__':
     unittest.main()

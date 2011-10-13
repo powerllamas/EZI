@@ -28,8 +28,8 @@ def home():
     if 'search' in request.args:
         question = request.args['search']
         found = tfidf.search(question)
-        found_extended = [(title, similarity, Cleaner.make_printable(tfidf.documents[title])) 
-                for title, similarity in found]
+        found_extended = [(title, similarity, Cleaner.make_printable(tfidf.documents[index][1])) 
+                for title, similarity, index in found]
     return render_template('home.html', found=found_extended, query=question)
 
 if __name__ == '__main__':

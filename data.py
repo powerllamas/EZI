@@ -37,7 +37,7 @@ class Loader(object):
 
     @staticmethod
     def load_documents(filepath):
-        documents = {}
+        documents = []
         cache = []
         title = None
         for line in file(filepath):
@@ -45,10 +45,9 @@ class Loader(object):
             if words:
                 if title is None:
                     title = words
-                else:
-                    cache.append(words)
+                cache.append(words)
             else:
-                documents[title] = " ".join(cache)
+                documents.append((title, " ".join(cache)))                
                 cache = []
                 title = None
         return documents

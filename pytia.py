@@ -46,6 +46,6 @@ if __name__ == '__main__':
     question = raw_input("Enter search string or \"exit()\" and press enter: ")
     while question != "exit()":
             found = tfidf.search(question)
-            for title, similarity in found[:n]:
+            for title, similarity, index in found[:n]:
                 print "{0:4f}\t{1}".format(similarity, title)            
             question = raw_input("\nEnter search string or \"exit()\" and press enter: ")
