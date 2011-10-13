@@ -72,12 +72,12 @@ class TestTFIDF(unittest.TestCase):
     def setUp(self):
         stopwords = "stop".split()
         keywords = "aaa bbb ccc ddd eee fff".split()
-        documents = {
-                'document 1 ccc': "aaa aaa aaa ccc",
-                'document 2 stop': "stop aaa bbb ccc",
-                'document 3 stop': "aaa",
-                'document 4 ddd': "aaa bbb ccc ddd eee"
-                }
+        documents = [
+                ('document 1 ccc', "aaa aaa aaa ccc"),
+                ('document 2 stop', "stop aaa bbb ccc"),
+                ('document 3 stop', "aaa"),
+                ('document 4 ddd', "aaa bbb ccc ddd eee")
+                ]
         self.s = TFIDF(keywords, documents, Cleaner(stopwords))
 
     def test_keyword_setup(self):
@@ -88,10 +88,10 @@ class TestTFIDF(unittest.TestCase):
     def test_documents_setup(self):
         actual = self.s.document_vectors
         expected = {
-                'document 1 ccc': [3, 0, 2, 0, 0, 0],
-                'document 2 stop': [1, 1, 1, 0, 0, 0],
-                'document 3 stop': [1, 0, 0, 0, 0, 0],
-                'document 4 ddd': [1, 1, 1, 2, 1, 0]
+                0: [3, 0, 2, 0, 0, 0],
+                1: [1, 1, 1, 0, 0, 0],
+                2: [1, 0, 0, 0, 0, 0],
+                3: [1, 1, 1, 2, 1, 0]
                 }
         self.assertEqual(actual, expected)
 
@@ -107,27 +107,27 @@ class TestTFIDF(unittest.TestCase):
 
 
     def test_tf(self):
-        document = self.s.document_vectors['document 1 ccc']
+        document = self.s.document_vectors[0]
         actual = self.s.tf(document, 'ccc')
         expected = 0.6666666666
         self.assertAlmostEqual(actual, expected)
         
-        document = self.s.document_vectors['document 1 ccc']
+        document = self.s.document_vectors[0]
         actual = self.s.tf(document, 'aaa')
         expected = 1.0
         self.assertAlmostEqual(actual, expected)
 
-        document = self.s.document_vectors['document 2 stop']
+        document = self.s.document_vectors[1]
         actual = self.s.tf(document, 'aaa')
         expected = 1.0
         self.assertAlmostEqual(actual, expected)
 
-        document = self.s.document_vectors['document 3 stop']
+        document = self.s.document_vectors[2]
         actual = self.s.tf(document, 'aaa')
         expected = 1.0
         self.assertAlmostEqual(actual, expected)
 
-        document = self.s.document_vectors['document 4 ddd']
+        document = self.s.document_vectors[3]
         actual = self.s.tf(document, 'aaa')
         expected = 0.5
         self.assertAlmostEqual(actual, expected)
@@ -152,13 +152,13 @@ class TestTFIDF_flies(unittest.TestCase):
     def setUp(self):
         stopwords = "stop".split()
         keywords = "bee wasp fly fruit like".split()      
-        documents = {        
-                "D1" : "Time fly like an arrow but fruit fly like a banana.",
-                "D2" : "It's strange that bees and wasps don't like each other.",
-                "D3" : "The fly attendant sprayed the cabin with a strange fruit aerosol.",
-                "D4" : "Try not to carry a light, as wasps and bees may fly toward it.",
-                "D5" : "Fruit fly fly around in swarms. When fly they flap their wings 220 times a second."
-            }
+        documents = [        
+                ("D1", "Time fly like an arrow but fruit fly like a banana."),
+                ("D2", "It's strange that bees and wasps don't like each other."),
+                ("D3", "The fly attendant sprayed the cabin with a strange fruit aerosol."),
+                ("D4", "Try not to carry a light, as wasps and bees may fly toward it."),
+                ("D5", "Fruit fly fly around in swarms. When fly they flap their wings 220 times a second.")
+            ]
         self.s = TFIDF(keywords, documents, Cleaner(stopwords))
             
             
@@ -170,25 +170,25 @@ class TestTFIDF_flies(unittest.TestCase):
     def test_documents_setup(self):
         actual = self.s.document_vectors
         expected = {
-                'D1': [0, 2, 1, 2, 0],
-                'D2': [1, 0, 0, 1, 1],
-                'D3': [0, 1, 1, 0, 0],
-                'D4': [1, 1, 0, 0, 1],
-                'D5': [0, 3, 1, 0, 0]
+                0: [0, 2, 1, 2, 0],
+                1: [1, 0, 0, 1, 1],
+                2: [0, 1, 1, 0, 0],
+                3: [1, 1, 0, 0, 1],
+                4: [0, 3, 1, 0, 0]
                 }                
         self.assertEqual(actual, expected)
         
  
     def test_tf(self):
         expected_results = [
-            ("D1", [0, 1, 0.5, 1, 0]),
-            ("D2", [1, 0, 0, 1, 1]),
-            ("D3", [0, 1, 1, 0, 0]),
-            ("D4", [1, 1, 0, 0, 1]),
-            ("D5", [0, 1, 0.333333333333333333, 0, 0])
+            (0, [0, 1, 0.5, 1, 0]),
+            (1, [1, 0, 0, 1, 1]),
+            (2, [0, 1, 1, 0, 0]),
+            (3, [1, 1, 0, 0, 1]),
+            (4, [0, 1, 0.333333333333333333, 0, 0])
             ]
-        for title, expected_vector in expected_results:            
-            document = self.s.document_vectors[title]
+        for index, expected_vector in expected_results:            
+            document = self.s.document_vectors[index]
             for word, i in self.s.keywords.items():            
                 actual = self.s.tf(document, word)
                 expected = expected_vector[i]
@@ -210,11 +210,11 @@ class TestTFIDF_flies(unittest.TestCase):
 
     def test_tfidf(self):
         expected_results = [                         
-                            ('D1', [0, 0.096910013, 0.110924375, 0.397940009, 0]),
-                            ('D2', [0.397940009, 0, 0, 0.397940009, 0.397940009]),
-                            ('D3', [0, 0.096910013, 0.22184875, 0, 0]),
-                            ('D4', [0.397940009, 0.096910013, 0, 0, 0.397940009]),
-                            ('D5', [0, 0.096910013, 0.073949583, 0, 0])                            
+                            (0, [0, 0.096910013, 0.110924375, 0.397940009, 0]),
+                            (1, [0.397940009, 0, 0, 0.397940009, 0.397940009]),
+                            (2, [0, 0.096910013, 0.22184875, 0, 0]),
+                            (3, [0.397940009, 0.096910013, 0, 0, 0.397940009]),
+                            (4, [0, 0.096910013, 0.073949583, 0, 0])                            
                             ]
         for title, expected_vector in expected_results:
             document = self.s.document_vectors[title]
