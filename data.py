@@ -45,7 +45,8 @@ class Loader(object):
             if words:
                 if title is None:
                     title = words
-                cache.append(words)
+                else:
+                    cache.append(words)
             else:
                 documents.append((title, " ".join(cache)))                
                 cache = []
