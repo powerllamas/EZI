@@ -51,5 +51,7 @@ class Loader(object):
                 documents.append((title, " ".join(cache)))                
                 cache = []
                 title = None
+        if words:
+            documents.append((title, " ".join(cache)))  
         return documents
 

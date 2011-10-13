@@ -6,6 +6,7 @@ import math
 from data import Vector
 from word import Cleaner
 from search import TFIDF
+from data import Loader
 
 class TestVectorFunctions(unittest.TestCase):
 
@@ -223,6 +224,94 @@ class TestTFIDF_flies(unittest.TestCase):
                 self.assertAlmostEqual(actual, expected, places = 6)
         
 
+class TestTFIDF_InfoRetrieval(unittest.TestCase):
+    
+    def setUp(self):
+        stopwords = "stop".split()
+        keywords = "information agency retrieval".split()      
+        #documents = [        
+        #        ("Document 1", "information retrieval information retrieval"),
+        #        ("Document 2", "retrieval retrieval retrieval retrieval"),
+        #        ("Document 3", "agency information retrieval agency"),
+        #        ("Document 4", "retrieval agency retrieval agency"),
+        #    ]
+        documents = Loader.load_documents("data\documents-lab1.txt")
+        print len(documents)
+        
+        self.s = TFIDF(keywords, documents, Cleaner(stopwords))
+            
+            
+    def test_keyword_setup(self):
+        actual = self.s.keywords.items()
+        expected = [("agenc", 0), ("inform", 1), ("retriev", 2)]     
+        self.assertEqual(actual, expected)
+            
+    def test_documents_setup(self):
+        actual = self.s.document_vectors
+        expected = {
+                0: [0, 2, 2],
+                1: [0, 0, 4],
+                2: [2, 1, 1],
+                3: [2, 0, 2]
+                }                
+        self.assertEqual(actual, expected)
+        
+ 
+    def test_tf(self):
+        expected_results = [
+            (0, [0, 1, 1]),
+            (1, [0, 0, 1]),
+            (2, [1, 0.5, 0.5]),
+            (3, [1, 0, 1])
+            ]
+        for index, expected_vector in expected_results:            
+            document = self.s.document_vectors[index]
+            for word, i in self.s.keywords.items():            
+                actual = self.s.tf(document, word)
+                expected = expected_vector[i]
+                self.assertEqual(actual, expected)        
 
+                
+    def test_idf(self):
+        expected_results = [
+                            ("inform", math.log(2, 10)),
+                            ("retriev", 0.0),
+                            ("agenc", math.log(2, 10))
+                           ]        
+        for term, expected in expected_results:
+             actual = self.s.idf(term)
+             self.assertAlmostEqual(actual, expected, places=6)
+            
+
+    def test_tfidf(self):
+        expected_results = [                         
+                            (0, [0, math.log(2, 10), 0]),
+                            (1, [0, 0, 0]),
+                            (2, [math.log(2, 10), 0.5*math.log(2,10), 0]),
+                            (3, [math.log(2, 10), 0, 0])                           
+                            ]
+        for index, expected_vector in expected_results:
+            document = self.s.document_vectors[index]
+            actual_vector = self.s.tfidf(document)
+            for actual, expected in zip(actual_vector, expected_vector):
+                self.assertAlmostEqual(actual, expected, places = 6)        
+                
+    def test_similarity(self):
+        expected_results = [ (0, 1), (1, 0), (2,math.sqrt(0.2)), (3,0) ]
+        question_vector = self.s.phrase_to_vector("information retrieval")
+        question_tfidfs = self.s.tfidf(question_vector)
+        for index, expected in expected_results:            
+            actual = self.s.doc_question_similarity(index, question_tfidfs)            
+            self.assertEqual(actual, expected) 
+
+            
+    def test_search(self):
+        expected = [
+                            ("Document 1", 1.0, 0),
+                            ("Document 3", math.sqrt(0.2), 2),
+                            ]             
+        actual = self.s.search("information retrieval")            
+        self.assertEqual(actual, expected) 
+    
 if __name__ == '__main__':
     unittest.main()
