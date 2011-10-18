@@ -132,28 +132,26 @@ class TestTFIDF(unittest.TestCase):
         actual = self.s.tf(document, 'aaa')
         expected = 0.5
         self.assertAlmostEqual(actual, expected)
-        
+
 
     def test_idf(self):
-        
         expected_results = [
                             ("aaa", math.log(1.0, 10)), ("bbb", math.log(2.0, 10)),
                             ("ccc", math.log(1.3333333333333, 10)), ("ddd", math.log(4.0, 10)),
                             ("eee", math.log(4.0, 10)), ("fff", 0.0)
                             ]
-        
+
         for term, expected in expected_results:
             actual = self.s.idf(term)
             self.assertAlmostEqual(actual, expected)
 
 
-            
 class TestTFIDF_flies(unittest.TestCase):
     
     def setUp(self):
         stopwords = "stop".split()
-        keywords = "bee wasp fly fruit like".split()      
-        documents = [        
+        keywords = "bee wasp fly fruit like".split()
+        documents = [
                 ("D1", "Time fly like an arrow but fruit fly like a banana."),
                 ("D2", "It's strange that bees and wasps don't like each other."),
                 ("D3", "The fly attendant sprayed the cabin with a strange fruit aerosol."),
@@ -161,13 +159,12 @@ class TestTFIDF_flies(unittest.TestCase):
                 ("D5", "Fruit fly fly around in swarms. When fly they flap their wings 220 times a second.")
             ]
         self.s = TFIDF(keywords, documents, Cleaner(stopwords))
-            
-            
+
     def test_keyword_setup(self):
         actual = self.s.keywords.items()
         expected = [("bee", 0), ("fly", 1), ("fruit", 2), ("like", 3), ("wasp", 4)]     
         self.assertEqual(actual, expected)
-            
+
     def test_documents_setup(self):
         actual = self.s.document_vectors
         expected = {
@@ -176,9 +173,9 @@ class TestTFIDF_flies(unittest.TestCase):
                 2: [0, 1, 1, 0, 0],
                 3: [1, 1, 0, 0, 1],
                 4: [0, 3, 1, 0, 0]
-                }                
+                }
         self.assertEqual(actual, expected)
-        
+
  
     def test_tf(self):
         expected_results = [
@@ -188,14 +185,14 @@ class TestTFIDF_flies(unittest.TestCase):
             (3, [1, 1, 0, 0, 1]),
             (4, [0, 1, 0.333333333333333333, 0, 0])
             ]
-        for index, expected_vector in expected_results:            
+        for index, expected_vector in expected_results:
             document = self.s.document_vectors[index]
-            for word, i in self.s.keywords.items():            
+            for word, i in self.s.keywords.items():
                 actual = self.s.tf(document, word)
                 expected = expected_vector[i]
-                self.assertEqual(actual, expected)        
+                self.assertEqual(actual, expected)
 
-                
+
     def test_idf(self):
         expected_results = [
                             ("bee", 0.397940009),
@@ -203,44 +200,43 @@ class TestTFIDF_flies(unittest.TestCase):
                             ("fruit", 0.22184875),
                             ("like", 0.397940009),
                             ("wasp", 0.397940009)
-                           ]        
+                           ]
         for term, expected in expected_results:
              actual = self.s.idf(term)
              self.assertAlmostEqual(actual, expected, places=6)
-            
+
 
     def test_tfidf(self):
-        expected_results = [                         
+        expected_results = [
                             (0, [0, 0.096910013, 0.110924375, 0.397940009, 0]),
                             (1, [0.397940009, 0, 0, 0.397940009, 0.397940009]),
                             (2, [0, 0.096910013, 0.22184875, 0, 0]),
                             (3, [0.397940009, 0.096910013, 0, 0, 0.397940009]),
-                            (4, [0, 0.096910013, 0.073949583, 0, 0])                            
+                            (4, [0, 0.096910013, 0.073949583, 0, 0])
                             ]
         for title, expected_vector in expected_results:
             document = self.s.document_vectors[title]
             actual_vector = self.s.tfidf(document)
             for actual, expected in zip(actual_vector, expected_vector):
                 self.assertAlmostEqual(actual, expected, places = 6)
-        
+
 
 class TestTFIDF_InfoRetrieval(unittest.TestCase):
-    
+
     def setUp(self):
         stopwords = "stop".split()
-        keywords = "information agency retrieval".split()      
+        keywords = "information agency retrieval".split()
         #documents = [        
         #        ("Document 1", "information retrieval information retrieval"),
         #        ("Document 2", "retrieval retrieval retrieval retrieval"),
         #        ("Document 3", "agency information retrieval agency"),
         #        ("Document 4", "retrieval agency retrieval agency"),
         #    ]
-        documents = Loader.load_documents("data\documents-lab1.txt")
-        print len(documents)
-        
+        documents = Loader.load_documents("data/documents-lab1.txt")
+
         self.s = TFIDF(keywords, documents, Cleaner(stopwords))
-            
-            
+
+
     def test_keyword_setup(self):
         actual = self.s.keywords.items()
         expected = [("agenc", 0), ("inform", 1), ("retriev", 2)]     
@@ -255,7 +251,7 @@ class TestTFIDF_InfoRetrieval(unittest.TestCase):
                 3: [2, 0, 2]
                 }                
         self.assertEqual(actual, expected)
-        
+
  
     def test_tf(self):
         expected_results = [
@@ -264,54 +260,54 @@ class TestTFIDF_InfoRetrieval(unittest.TestCase):
             (2, [1, 0.5, 0.5]),
             (3, [1, 0, 1])
             ]
-        for index, expected_vector in expected_results:            
+        for index, expected_vector in expected_results:
             document = self.s.document_vectors[index]
-            for word, i in self.s.keywords.items():            
+            for word, i in self.s.keywords.items():
                 actual = self.s.tf(document, word)
                 expected = expected_vector[i]
-                self.assertEqual(actual, expected)        
+                self.assertEqual(actual, expected)
 
-                
+
     def test_idf(self):
         expected_results = [
                             ("inform", math.log(2, 10)),
                             ("retriev", 0.0),
                             ("agenc", math.log(2, 10))
-                           ]        
+                           ]
         for term, expected in expected_results:
              actual = self.s.idf(term)
              self.assertAlmostEqual(actual, expected, places=6)
-            
+
 
     def test_tfidf(self):
-        expected_results = [                         
+        expected_results = [
                             (0, [0, math.log(2, 10), 0]),
                             (1, [0, 0, 0]),
                             (2, [math.log(2, 10), 0.5*math.log(2,10), 0]),
-                            (3, [math.log(2, 10), 0, 0])                           
+                            (3, [math.log(2, 10), 0, 0])
                             ]
         for index, expected_vector in expected_results:
             document = self.s.document_vectors[index]
             actual_vector = self.s.tfidf(document)
             for actual, expected in zip(actual_vector, expected_vector):
-                self.assertAlmostEqual(actual, expected, places = 6)        
-                
+                self.assertAlmostEqual(actual, expected, places = 6)
+
     def test_similarity(self):
         expected_results = [ (0, 1), (1, 0), (2,math.sqrt(0.2)), (3,0) ]
         question_vector = self.s.phrase_to_vector("information retrieval")
         question_tfidfs = self.s.tfidf(question_vector)
-        for index, expected in expected_results:            
-            actual = self.s.doc_question_similarity(index, question_tfidfs)            
+        for index, expected in expected_results:
+            actual = self.s.doc_question_similarity(index, question_tfidfs)
             self.assertEqual(actual, expected) 
 
-            
+
     def test_search(self):
         expected = [
                             ("Document 1", 1.0, 0),
                             ("Document 3", math.sqrt(0.2), 2),
-                            ]             
-        actual = self.s.search("information retrieval")            
+                            ]
+        actual = self.s.search("information retrieval")
         self.assertEqual(actual, expected) 
-    
+
 if __name__ == '__main__':
     unittest.main()
