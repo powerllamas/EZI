@@ -8,9 +8,9 @@ from search import TFIDF
 
 from flask import Flask, render_template, request
 
-keywords_path = "data/keywords-lab1.txt"
+keywords_path = "data/keywords.txt"
 stopwords_path = "data/stopwords.txt"
-documents_path = "data/documents-lab1.txt"
+documents_path = "data/documents.txt"
 
 keywords = Loader.load_keywords(keywords_path)
 stopwords = Loader.load_stopwords(stopwords_path)
