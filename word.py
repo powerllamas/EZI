@@ -4,6 +4,7 @@ import string
 
 from stemmer import PorterStemmer
 
+
 class Cleaner(object):
 
     def __init__(self, stopwords):
@@ -16,15 +17,14 @@ class Cleaner(object):
         if word in self.stopwords:
             word = None
         else:
-            word = self.stemmer.stem(word, 0, len(word)-1)
+            word = self.stemmer.stem(word, 0, len(word) - 1)
         return word
 
     def clean_wordlist(self, wordlist):
-        wordlist = " ".join(wordlist).replace('-',' ').split()
+        wordlist = " ".join(wordlist).replace('-', ' ').split()
         clean_list = map(lambda x: self.clean_word(x), wordlist)
         return [word for word in clean_list if word]
 
     @staticmethod
     def make_printable(phrase):
         return filter(lambda c: c in string.printable, phrase)
-

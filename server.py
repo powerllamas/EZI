@@ -8,9 +8,9 @@ from search import TFIDF
 
 from flask import Flask, render_template, request
 
-keywords_path = "data/keywords.txt"
+keywords_path = "data/keywords-2.txt"
 stopwords_path = "data/stopwords.txt"
-documents_path = "data/documents.txt"
+documents_path = "data/documents-2.txt"
 
 keywords = Loader.load_keywords(keywords_path)
 stopwords = Loader.load_stopwords(stopwords_path)
@@ -21,6 +21,7 @@ tfidf = TFIDF(keywords, documents, cleaner)
 
 app = Flask(__name__)
 
+
 @app.route('/')
 def home():
     found_extended = None
@@ -28,7 +29,8 @@ def home():
     if 'search' in request.args:
         question = request.args['search']
         found = tfidf.search(question)
-        found_extended = [(title, similarity, Cleaner.make_printable(tfidf.documents[index][1])) 
+        found_extended = [(title, similarity,
+            Cleaner.make_printable(tfidf.documents[index][1]))
                 for title, similarity, index in found]
     return render_template('home.html', found=found_extended, query=question)
 

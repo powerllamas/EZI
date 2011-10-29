@@ -2,17 +2,18 @@
 
 import math
 
+
 class Vector(object):
 
     @staticmethod
     def length(vector):
-        powers = map(lambda x: pow(x,2), vector)
+        powers = map(lambda x: pow(x, 2), vector)
         return math.sqrt(sum(powers))
 
     @staticmethod
     def dot_product(vec_a, vec_b):
         pairs = zip(vec_a, vec_b)
-        multiples = [x*y for x,y in pairs]
+        multiples = [x * y for x, y in pairs]
         return float(sum(multiples))
 
     @staticmethod
@@ -22,6 +23,7 @@ class Vector(object):
             return 0.0
         else:
             return Vector.dot_product(vec_a, vec_b) / float(length)
+
 
 class Loader(object):
 
@@ -48,10 +50,9 @@ class Loader(object):
                 else:
                     cache.append(words)
             else:
-                documents.append((title, " ".join(cache)))                
+                documents.append((title, " ".join(cache)))
                 cache = []
                 title = None
         if words:
-            documents.append((title, " ".join(cache)))  
+            documents.append((title, " ".join(cache)))
         return documents
-
