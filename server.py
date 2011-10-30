@@ -36,10 +36,10 @@ def home():
 
 @app.route('/guesses.json')
 def guesses():
-    guesses = []
+    guesses = None
     if 'search' in request.args:
         question = request.args['search']
-        guesses += [question.upper()]
+        guesses = [question.upper()]
         guesses += ["one", "two", "three", "four"]
     return jsonify(guesses=guesses)
 
