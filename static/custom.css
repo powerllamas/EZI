@@ -67,6 +67,7 @@ form + div.info {
 }
 
 .smart_autocomplete_type_ahead_field {
+  visibility: hidden;
 }
 
 input, li {

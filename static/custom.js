@@ -23,6 +23,8 @@ $(document).ready(function(){
                              new RegExp($(this.context).val(),"gi"),
                              "<strong>$&</strong>") +
                           "</li>");
-                       }
+                       },
+      forceSelect: true,
+      typeAhead: true
     });
 });
