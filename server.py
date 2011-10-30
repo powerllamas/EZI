@@ -6,7 +6,7 @@ from data import Loader
 from word import Cleaner
 from search import TFIDF
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 
 keywords_path = "data/keywords-2.txt"
 stopwords_path = "data/stopwords.txt"
@@ -33,6 +33,15 @@ def home():
             Cleaner.make_printable(tfidf.documents[index][1]))
                 for title, similarity, index in found]
     return render_template('home.html', found=found_extended, query=question)
+
+@app.route('/_guesses')
+def guesses():
+    guesses = []
+    if 'search' in request.args:
+        question = request.args['search']
+        guesses += [question.upper()]
+        guesses += ["one", "two", "three", "four"]
+    return jsonify(guesses=guesses)
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
