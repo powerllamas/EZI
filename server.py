@@ -34,7 +34,7 @@ def home():
                 for title, similarity, index in found]
     return render_template('home.html', found=found_extended, query=question)
 
-@app.route('/_guesses')
+@app.route('/guesses.json')
 def guesses():
     guesses = []
     if 'search' in request.args:
