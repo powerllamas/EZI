@@ -1,5 +1,6 @@
 html, body {
     background-color: #eee;
+    text-shadow: 0px 1px 1px #AAAAAA;
 }
 
 form {
@@ -34,6 +35,8 @@ form + div.info {
     background-color: #F5F5F5;
     padding: 20px 20px 10px;
     margin: -20px -20px 20px;
+    text-shadow: none;
+    text-shadow: 0px 1px 1px #FFFFFF;
 }
 
 .popover .inner {
@@ -68,4 +71,12 @@ form + div.info {
 
 input, li {
   color: #000000;
+}
+
+.page-header h1 a {
+  color: #404040;
+}
+
+.page-header h1 a:hover {
+  text-decoration: none;
 }
