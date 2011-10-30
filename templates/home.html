@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="static/bootstrap.css">
     <link rel="stylesheet" href="static/custom.css">
     <script src="static/jquery-1.6.4.min.js"></script>
+    <script src="static/jquery.smart_autocomplete.js"></script>
     <script src="static/bootstrap-twipsy.js"></script>
     <script src="static/bootstrap-popover.js"></script>
     <script src="static/custom.js"></script>
@@ -19,7 +20,7 @@
           </h1>
         </div>
         <form>
-          <input type='search' class="span8" placeholder="Szukaj..." name='search' value="{{ query }}" />
+          <input id='search' type='search' class="span8" placeholder="Szukaj..." name='search' value="{{ query }}" />
         </form>
         {% if found is not none %}
           {% if not found %}
