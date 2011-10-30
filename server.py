@@ -41,7 +41,8 @@ def guesses():
     if 'search' in request.args:
         question = request.args['search']
         guesses = [question]
-        guesses += [question+"a", question+"b", question+"c", question+"d"]
+        for c in "abcdefghijklmnopqrstuwxyz":
+            guesses.append(question+c)
     return jsonify(guesses=guesses)
 
 if __name__ == '__main__':

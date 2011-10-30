@@ -25,6 +25,7 @@ $(document).ready(function(){
                           "</li>");
                        },
       forceSelect: true,
-      typeAhead: true
+      typeAhead: true,
+      maxResults: 8
     });
 });
