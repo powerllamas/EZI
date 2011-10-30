@@ -4,4 +4,7 @@ $(document).ready(function(){
     }).click(function(e){
         e.preventDefault();
     });
+
+    var search = $('#search');
+    search.attr('autocomplete', 'off');
 });
