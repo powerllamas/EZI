@@ -16,6 +16,13 @@ $(document).ready(function(){
                     dfd.resolve( data.guesses );
                   });
                 }).promise();
-              }
+              },
+      resultFormatter: function(r){
+                         return ("<li>" +
+                           r.replace(
+                             new RegExp($(this.context).val(),"gi"),
+                             "<strong>$&</strong>") +
+                          "</li>");
+                       }
     });
 });

@@ -71,6 +71,7 @@ form + div.info {
 
 input, li {
   color: #000000;
+  text-shadow: none;
 }
 
 .page-header h1 a {
