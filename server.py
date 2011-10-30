@@ -14,7 +14,7 @@ documents_path = "data/documents-2.txt"
 
 keywords = Loader.load_keywords(keywords_path)
 stopwords = Loader.load_stopwords(stopwords_path)
-documents = Loader.load_documents(documents_path)
+documents = Loader.load_documents(documents_path, categories=True)
 
 cleaner = Cleaner(stopwords)
 tfidf = TFIDF(keywords, documents, cleaner)
@@ -29,7 +29,8 @@ def home():
     if 'search' in request.args:
         question = request.args['search']
         found = tfidf.search(question)
-        found_extended = [(title, similarity,
+        found_extended = [(Cleaner.make_printable(title),
+            similarity,
             Cleaner.make_printable(tfidf.documents[index][1]))
                 for title, similarity, index in found]
     return render_template('home.html', found=found_extended, query=question)
@@ -39,8 +40,8 @@ def guesses():
     guesses = None
     if 'search' in request.args:
         question = request.args['search']
-        guesses = [question.upper()]
-        guesses += ["one", "two", "three", "four"]
+        guesses = [question]
+        guesses += [question+"a", question+"b", question+"c", question+"d"]
     return jsonify(guesses=guesses)
 
 if __name__ == '__main__':

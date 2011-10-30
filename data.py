@@ -38,21 +38,26 @@ class Loader(object):
         return keywords
 
     @staticmethod
-    def load_documents(filepath):
+    def load_documents(filepath, categories=False):
         documents = []
         cache = []
         title = None
+        category = None
         for line in file(filepath):
             words = line.strip()
             if words:
+                if categories and category is None:
+                    category = words
+                    continue
                 if title is None:
                     title = words
                 else:
                     cache.append(words)
             else:
-                documents.append((title, " ".join(cache)))
+                documents.append((title, " ".join(cache), category))
                 cache = []
                 title = None
+                category = None
         if words:
-            documents.append((title, " ".join(cache)))
+            documents.append((title, " ".join(cache), category))
         return documents
