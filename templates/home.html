@@ -21,6 +21,7 @@
         </div>
         <form>
           <input id='search' type='search' class="span8" placeholder="Szukaj..." name='search' value="{{ query }}" />
+          <input type='submit' value='Szukaj' class="btn"/>
         </form>
         {% if found is not none %}
           {% if not found %}
