@@ -6,6 +6,7 @@ from data import Loader
 from word import Cleaner
 from search import TFIDF
 from guess import Guesses
+import expander
 
 from flask import Flask, render_template, request, jsonify
 
@@ -42,8 +43,10 @@ def guesses():
     guesses = None
     if 'search' in request.args:
         question = request.args['search']
-        guesses = [question]
-        guesses += autocomplete.guess(question)
+        # guesses = [question]
+        #guesses += autocomplete.guess(question)
+        guesses = []
+        guesses += expander.simillar(question)
     return jsonify(guesses=guesses)
 
 if __name__ == '__main__':
