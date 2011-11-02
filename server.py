@@ -5,6 +5,7 @@ import os
 from data import Loader
 from word import Cleaner
 from search import TFIDF
+from guess import Guesses
 
 from flask import Flask, render_template, request, jsonify
 
@@ -18,6 +19,7 @@ documents = Loader.load_documents(documents_path, categories=True)
 
 cleaner = Cleaner(stopwords)
 tfidf = TFIDF(keywords, documents, cleaner)
+autocomplete = Guesses(tfidf.get_term_document_matrix(), tfidf.keywords, tfidf.keywords_lookup)
 
 app = Flask(__name__)
 
@@ -41,8 +43,7 @@ def guesses():
     if 'search' in request.args:
         question = request.args['search']
         guesses = [question]
-        for c in "abcdefghijklmnopqrstuwxyz":
-            guesses.append(question+c)
+        guesses += autocomplete.guess(question)
     return jsonify(guesses=guesses)
 
 if __name__ == '__main__':

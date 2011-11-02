@@ -11,6 +11,7 @@ class TFIDF(object):
 
     def __init__(self, keywords, documents, cleaner):
         self.keywords = None
+        self.keywords_lookup = None
         self.documents_count = None
         self.documents = None
         self.document_vectors = None
@@ -25,10 +26,12 @@ class TFIDF(object):
 
     def _setup_keywords(self, keywords):
         self.keywords = OrderedDict()
+        self.keywords_lookup = OrderedDict()
         cleaned = self.cleaner.clean_wordlist(keywords)
         cleaned = set(cleaned)
         for i, word in enumerate(sorted(cleaned)):
             self.keywords[word] = i
+            self.keywords_lookup[i] = word
 
     def _setup_documents(self, documents):
         self.documents = documents
@@ -107,3 +110,10 @@ class TFIDF(object):
             return 0
         else:
             return math.log(float(len(self.documents)) / float(n), 10)
+
+    def get_term_document_matrix(self):
+        result = []
+        for i in xrange(len(self.documents_tfidfs)):
+            result.append(self.documents_tfidfs[i])
+        return result
+
