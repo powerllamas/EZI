@@ -1,8 +1,28 @@
 {% extends "base.html" %}
 {% block body %}
-  <ol>
+  <ol class="clusters">
     {% for cluster in clusters %}
-    <li>{{ cluster }}</li>
+    <li>
+      <h2>Klaster {{ loop.index }}</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Tytuł</th>
+            <th>Kategoria</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for document in cluster %}
+          <tr>
+            <td>{{ document[0] }}</td>
+            <td>{{ document[2] }}</td>
+            <td><a href="#" rel="popover" title="{{ document[0] }}" data-content="{{ document[1] }}" >Więcej</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </li>
     {% endfor %}
   </ol>
 {% endblock %}

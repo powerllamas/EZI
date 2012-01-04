@@ -89,3 +89,7 @@ input, li {
   color: rgba(82, 168, 236, 0.8);
   text-decoration: none;
 }
+
+ol.clusters {
+  list-style: none;
+}
