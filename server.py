@@ -51,7 +51,10 @@ def guesses():
 
 @app.route('/clusters')
 def clusters():
-    return render_template('clusters.html')
+    clusters = tfidf.group_kmeans(9, 10)
+    enhanced_clusters = [[documents[doc_id] for doc_id in cluster]
+            for cluster in clusters]
+    return render_template('clusters.html', clusters=enhanced_clusters)
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
