@@ -49,6 +49,10 @@ def guesses():
         guesses += expander.simillar(question)
     return jsonify(guesses=guesses)
 
+@app.route('/clusters')
+def clusters():
+    return render_template('clusters.html')
+
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.debug = True
