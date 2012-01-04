@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import math
-
+import random
 from collections import defaultdict, OrderedDict
 
 from data import Vector
@@ -68,7 +68,7 @@ class TFIDF(object):
         question_tfidfs = self.tfidf(question_vector)
         ranking = {}
         for i in range(len(self.documents)):
-            ranking[i] = self.doc_question_similarity(i, question_tfidfs)
+            ranking[i] = self.doc_phrase_similarity(i, question_tfidfs)
 
         results = [(self.documents[item[0]][0], item[1], item[0])
                 for item in sorted(ranking.items(),
@@ -80,13 +80,14 @@ class TFIDF(object):
         phrase_clean = self.cleaner.clean_wordlist(phrase_words)
         return self.wordlist_to_vector(phrase_clean)
 
-    def similarity(self, vec1, vec2):
-        return Vector.similarity(self.tfidf(vec1), self.tfidf(vec2))
-
-    def doc_question_similarity(self, doc_index, question_tfidfs):
+    def doc_phrase_similarity(self, doc_index, question_tfidfs):
         return Vector.similarity(
                 self.tfidf_by_doc_index(doc_index), question_tfidfs)
 
+    def doc_doc_similarity(self, doc1_index, doc2_index):
+        return Vector.similarity(
+                self.tfidf_by_doc_index(doc1_index), self.tfidf_by_doc_index(doc2_index))                
+                
     def tfidf_by_doc_index(self, i):
         return self.documents_tfidfs[i]
 
@@ -116,4 +117,48 @@ class TFIDF(object):
         for i in xrange(len(self.documents_tfidfs)):
             result.append(self.documents_tfidfs[i])
         return result
+        
+    def group_kmeans(self, k, max_iters):
+        centroids_tfidfs = random.sample(self.documents_tfidfs.values(), k)
+        i = 0;
+        changed = True
+        groups = [[doc_id for doc_id in range(len(self.documents))]]
+        old_groups = []
+        while i < max_iters and old_groups != groups:
+            old_groups = groups
+            groups = self.assign_to_groups(centroids_tfidfs)
+            centroids_tfidfs = self.centroids(groups)        
+        return groups
 
+    def assign_to_groups(self, centroids_tfidfs):    
+        groups = []
+        for i in range(len(centroids_tfidfs)):
+            groups.append([])
+        for doc_id in range(len(self.documents)):
+            best = -1;
+            for i, centroid_tfidf in enumerate(centroids_tfidfs):
+                sim = self.doc_phrase_similarity(doc_id, centroid_tfidf)
+                if sim > best:
+                    best = sim
+                    group = i
+            groups[group].append(doc_id)
+        return groups
+            
+    def centroids(self, groups):      
+        centroids = []
+        for group in groups:
+            centroid = self.centroid(group)
+            centroids.append(centroid)
+        return centroids
+        
+    def centroid(self, group):
+        centroid = []
+        for doc_id in group:
+            doc_tfidf = self.documents_tfidfs[doc_id]
+            for i, value in enumerate(doc_tfidf):
+                if i >= len(centroid):
+                    centroid.append(0)
+                centroid[i] += value
+        centroid = [value / len(group) for value in centroid]            
+        return centroid
+        

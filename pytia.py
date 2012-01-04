@@ -32,11 +32,11 @@ if __name__ == '__main__':
           u"redistribute it.\n\t\tThere is NO WARRANTY, to the extent "
           u"permitted by law."))
     parser.add_argument('-k', '--keywords', help="Keywords file path",
-            default="data/keywords.txt")
+            default="data/keywords-2.txt")
     parser.add_argument('-s', '--stopwords', help="Stopwords file path",
             default="data/stopwords.txt")
     parser.add_argument('-d', '--documents', help="Documents file path",
-            default="data/documents.txt")
+            default="data/documents-2.txt")
     parser.add_argument('-n', '--noresults',
             help="Number of displayed results", default="5")
     parser.add_argument('-v', '--version', action='version',
@@ -53,8 +53,13 @@ if __name__ == '__main__':
 
     question = raw_input("Enter search string or \"exit()\" and press enter: ")
     while question != "exit()":
-            found = tfidf.search(question)
+            found = tfidf.search(question)           
             for title, similarity, index in found[:n]:
                 print "{0:4f}\t{1}".format(similarity, title)
+            groups = tfidf.group_kmeans(9, 10)
+            for i, group in enumerate(groups):
+                print "\nGroup {0}:\n".format(i)
+                for doc_id in group:
+                    print "\t{0}\n".format(documents[doc_id][0])
             question = raw_input("\nEnter search string or \"exit()\" and "
                     "press enter: ")
