@@ -4,6 +4,7 @@ html, body {
 }
 
 form {
+    display: inline-block;
     text-align: center;
 }
 
@@ -13,6 +14,11 @@ form {
 
 form + div.info {
     display: inline-block;
+}
+
+form + a.btn.info {
+    display: inline-block;
+    float: right;
 }
 
 .container {

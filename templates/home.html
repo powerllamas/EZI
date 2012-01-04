@@ -23,6 +23,7 @@
           <input id='search' type='search' class="span8" placeholder="Szukaj..." name='search' value="{{ query }}" />
           <input type='submit' value='Szukaj' class="btn"/>
         </form>
+        <a href="/clusters" class="btn info">Pokaż klastry</a>
         {% if found is not none %}
           {% if not found %}
             <div class="alert-message block-message info">
