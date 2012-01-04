@@ -24,13 +24,21 @@ class Guesses(object):
 
     def guess(self, _query):
         query = _query.strip()
-        best = []
-        if query in self.terms:
-            i = self.terms[query]
-            best = self._term_correlation_matrix[i]
-            best = [(score, idx) for idx, score in enumerate(best)]
-            best = sorted(best, key=lambda x: x[0], reverse=True)
-            best = [self.terms_lookup[x[1]] for x in best[1:9]]
-            best = ["{0} {1}".format(query, x) for x in best]
-            print best
-        return best
+        terms_cor = []
+        result = None
+        for term in query.split():
+            if term in self.terms:
+                best = []
+                i = self.terms[term]
+                best = self._term_correlation_matrix[i]
+                terms_cor.append(best)
+        if terms_cor:
+            if len(terms_cor) > 1:
+                result = [reduce(lambda x, y: x * y, term, 1) for term in zip(terms_cor)]
+            else:
+                result = terms_cor[0]
+            result = [(score, idx) for idx, score in enumerate(result)]
+            result = sorted(result, key=lambda x: x[0], reverse=True)
+            result = [self.terms_lookup[x[1]] for x in result[1:9]]
+            result = ["{0} {1}".format(query, x) for x in result]
+        return result
