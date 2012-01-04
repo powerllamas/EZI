@@ -51,7 +51,11 @@ def guesses():
 
 @app.route('/clusters')
 def clusters():
-    clusters = tfidf.group_kmeans(9, 10)
+    if 'k' in request.args:
+        k = int(request.args['k'])
+    else:
+        k = 9
+    clusters = tfidf.group_kmeans(k, 20)
     enhanced_clusters = [[documents[doc_id] for doc_id in cluster]
             for cluster in clusters]
     cleaned_clusters = [[(Cleaner.make_printable(title),
